@@ -1,0 +1,42 @@
+#iportando as bibliotecas
+from agno.knowledge.chunking import markdown
+from flask import Flask, jsonify, request
+from flask_cors import CORS
+
+from agno.models.openai import OpenAIChat
+from agno.agent import Agent
+from dotenv import load_dotenv
+
+#leitura da chave de api
+load_dotenv()
+
+#criar o app
+app = Flask(__name__)
+
+#habilitar o CORS
+CORS(app)
+
+#criar  o agente
+agente = Agent(
+    model=OpenAIChat(id="gpt-4o-mini"),
+    description="Você um agente virtual do Hotel Travesseiro Nervoso, Slogan: Aqui até insonia dorme"
+    "Você responde de forma clara e humorada, reservas e preços"
+    "Quanto Standard ($500), Quanto Suíte Deluxe (700), Quarto Suíte Presidencial (1000)",
+markdown=True
+)
+
+@app.route("/", methods=["GET"])
+def testar():
+    return jsonify({"mensage": "API funcionando"})
+
+#criar a rota e o metodos POST
+@app.route("/chat", methods=["POST"])
+def pergunta():
+    dados= request.get_json()
+    pergunta = dados["pergunta"]
+
+    resposta = agente.run(pergunta)
+    return jsonify({"resposta":resposta.content})
+
+if __name__ == "__main__":
+    app.run(debug=True, host="0.0.0.0", port=8000)
