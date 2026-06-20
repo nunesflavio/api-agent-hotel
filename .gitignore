@@ -9,10 +9,7 @@
 .idea/**/aws.xml
 
 #API key para o curso
-/apiIntro/.env
-/front/.env
-/apiSimple/.env
-/apiSimple/yolov8n.pt
+.env
 
 #ambiente virtual
 /.venv
